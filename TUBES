@@ -145,14 +145,14 @@ func main() {
 
 	for {
 		fmt.Println()
-		fmt.Println("|=============== REVIEW FILM ===============|")
-		fmt.Println("|1. Tambah Film                             |")
-		fmt.Println("|2. Edit Film                               |")
-		fmt.Println("|3. Cari Film                               |")
-		fmt.Println("|4. Urutkan Rating                          |")
-		fmt.Println("|5. Statistik                               |")
-		fmt.Println("|6. Tampilkan Film                          |")
-		fmt.Println("|0. Keluar                                  |")
+		fmt.Println("|============= REVIEW FILM =============|")
+		fmt.Println("|1. Tambah Film                           |")
+		fmt.Println("|2. Edit Film                             |")
+		fmt.Println("|3. Cari Film                             |")
+		fmt.Println("|4. Urutkan Rating                        |")
+		fmt.Println("|5. Statistik                             |")
+		fmt.Println("|6. Tampilkan Film                        |")
+		fmt.Println("|0. Keluar                                |")
 		fmt.Print("|Pilih : ")
 		fmt.Scan(&pilih)
 
