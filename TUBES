@@ -1,0 +1,168 @@
+package main
+
+import "fmt"
+
+const NMAX = 100
+
+type Film struct {
+	judul  string
+	genre  string
+	viewer  int
+	rating float64
+}
+
+type TabFilm [NMAX]Film
+
+// Fungsi untuk menambah film ke dalam tabel
+
+func tambahFilm(A *TabFilm, n *int) {
+	fmt.Print("Judul : ")
+	fmt.Scan(&A[*n].judul)
+
+	fmt.Print("Genre : ")
+	fmt.Scan(&A[*n].genre)
+
+	fmt.Print("Viewer : ")
+	fmt.Scan(&A[*n].viewer)
+
+	fmt.Print("Rating : ")
+	fmt.Scan(&A[*n].rating)
+
+	*n++
+}
+
+// Fungsi untuk menampilkan semua film dalam tabel
+
+func tampilFilm(A TabFilm, n int) {
+	var i int
+
+	for i = 0; i < n; i++ {
+		fmt.Println("----------------")
+		fmt.Println("Judul  :", A[i].judul)
+		fmt.Println("Genre  :", A[i].genre)
+		fmt.Println("Viewer  :", A[i].viewer)
+		fmt.Println("Rating :", A[i].rating)
+	}
+}
+
+// Fungsi untuk mengedit data film berdasarkan judul
+
+func editFilm(A *TabFilm, n int) {
+	var judul string
+	var idx int
+
+	fmt.Print("Masukkan judul film : ")
+	fmt.Scan(&judul)
+
+	idx = cariFilm(*A, n, judul)
+
+	if idx != -1 {
+		fmt.Print("Genre baru : ")
+		fmt.Scan(&A[idx].genre)
+
+		fmt.Print("Viewer baru : ")
+		fmt.Scan(&A[idx].viewer)
+
+		fmt.Print("Rating baru : ")
+		fmt.Scan(&A[idx].rating)
+
+		fmt.Println("Data berhasil diubah")
+	} else {
+		fmt.Println("Film tidak ditemukan")
+	}
+}
+
+// Fungsi untuk mengurutkan film berdasarkan rating menggunakan selection sort
+
+func selectionSort(A *TabFilm, n int) {
+	var pass, idx, i int
+	var temp Film
+
+	for pass = 0; pass < n-1; pass++ {
+
+		idx = pass
+
+		for i = pass + 1; i < n; i++ {
+			if A[i].rating > A[idx].rating {
+				idx = i
+			}
+		}
+
+		temp = A[pass]
+		A[pass] = A[idx]
+		A[idx] = temp
+	}
+}
+
+// Fungsi untuk mencari film dengan rating tertinggi dan terendah
+
+func ratingTertinggi(A TabFilm, n int) Film {
+	var i int
+	var max Film
+	max = A[0]
+
+	for i = 1; i < n; i++ {
+		if A[i].rating > max.rating {
+			max = A[i]
+		}
+	}
+	return max
+}	
+
+func ratingTerendah(A TabFilm, n int) Film {
+	var i int
+	var min Film
+	min = A[0]
+	for i = 1; i < n; i++ {
+		if A[i].rating < min.rating {
+			min = A[i]
+		}	
+	}
+	return min
+}
+
+// cari Film
+
+func cariFilm(A TabFilm, n int, judul string) int {
+	var i int
+
+	for i = 0; i < n; i++ {
+		if A[i].judul == judul {
+			return i
+		}
+	}
+	return -1
+}
+
+// Fungsi utama
+
+func main() {
+
+	var film TabFilm
+	var n int
+	var pilih int
+	var f Film
+
+	for {
+		fmt.Println()
+		fmt.Println("|=============== REVIEW FILM ===============|")
+		fmt.Println("|1. Tambah Film                             |")
+		fmt.Println("|2. Edit Film                               |")
+		fmt.Println("|3. Cari Film                               |")
+		fmt.Println("|4. Urutkan Rating                          |")
+		fmt.Println("|5. Statistik                               |")
+		fmt.Println("|6. Tampilkan Film                          |")
+		fmt.Println("|0. Keluar                                  |")
+		fmt.Print("|Pilih : ")
+		fmt.Scan(&pilih)
+
+		switch pilih {
+
+		case 1:
+			tambahFilm(&film, &n)
+
+		case 2:
+			editFilm(&film, n)
+
+
+}
