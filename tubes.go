@@ -119,7 +119,7 @@ func main() {
 	
 	
 
-// menampilkan daftar film
+// menampilkan daftar film 
 func tampilFilm(A DaftarFilm, n int) {
 	var i int
 
