@@ -51,7 +51,7 @@ func main() {
 		switch pilih {
 		case 1:
 			tambahFilm(&A, &n)
-		case 2:
+		case 2: 
 			tampilFilm(A, n)
 
 		case 3:
