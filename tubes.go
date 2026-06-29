@@ -216,3 +216,4 @@ func rataRataRating(A DaftarFilm, n int) float64 {
 
 	return total / float64(n)
 }
+cajdscacjacasdc
