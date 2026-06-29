@@ -18,7 +18,7 @@ func main() {
 	var A DaftarFilm
 	var n int = 10
 	var pilih int
-	var judul string
+	var judul, genre string
 
 	A[0] = Film{"Interstellar", "SciFi", 2014, "LuarAngkasa", 9.0}
 	A[1] = Film{"Joker", "Drama", 2019, "ArthurFleck", 8.5}
@@ -50,12 +50,15 @@ func main() {
 
 		switch pilih {
 		case 1:
-
+			tambahFilm(&A, &n)
 		case 2:
 			tampilFilm(A, n)
 
 		case 3:
-
+			tampilFilm(A, n)
+			fmt.Print("Masukkan judul film yang akan diedit : ")
+			fmt.Scan(&judul)
+			editFilm(&A, n, judul)
 		case 4:
 			tampilFilm(A, n)
 			fmt.Print("Masukkan judul film yang akan dihapus : ")
@@ -75,8 +78,8 @@ func main() {
 
 			case 2:
 				fmt.Print("Masukkan genre film yang akan dicari : ")
-				fmt.Scan(&judul)
-
+				fmt.Scan(&genre)
+				
 			default:
 				fmt.Println("Pilihan tidak valid")
 			}
@@ -88,7 +91,9 @@ func main() {
 			fmt.Scan(&pilih)
 			switch pilih {
 			case 1:
-
+				urutFilmRating(&A, n)
+				tampilFilm(A, n)
+				fmt.Println("Film berhasil diurutkan berdasarkan rating tertinggi")
 			case 2:
 				urutFilmTahunRilisInsertionSortDescending(&A, n)
 				tampilFilm(A, n)
@@ -103,7 +108,7 @@ func main() {
 			fmt.Scan(&pilih)
 			switch pilih {
 			case 1:
-
+				statistikFilmGenre(A, n)
 			case 2:
 				rata := rataRataRating(A, n)
 				fmt.Printf("Rata-rata rating film: %.2f\n", rata)
@@ -115,6 +120,37 @@ func main() {
 			fmt.Println("Terima kasih telah menggunakan aplikasi ini!")
 			return
 		}
+	}
+}
+//----------------------------------------------------CRUD--------------------------------------------
+//menambahkan film baru ke daftar film
+func tambahFilm(A *DaftarFilm, n *int) {
+	var judul, genre, deskripsi string
+	var tahunRilis int
+	var rating float64
+
+	fmt.Print("Masukkan judul film : ")
+	fmt.Scan(&judul)
+	fmt.Print("Masukkan genre film : ")
+	fmt.Scan(&genre)
+	fmt.Print("Masukkan tahun rilis film : ")
+	fmt.Scan(&tahunRilis)
+	fmt.Print("Masukkan deskripsi film : ")
+	fmt.Scan(&deskripsi)
+	fmt.Print("Masukkan rating film : ")
+	fmt.Scan(&rating)
+
+	if *n < NMAX {
+		A[*n].judul = judul
+		A[*n].genre = genre
+		A[*n].tahunRilis = tahunRilis
+		A[*n].deskripsi = deskripsi
+		A[*n].rating = rating
+
+		*n = *n + 1
+		fmt.Println("Film berhasil ditambahkan")
+	} else {
+		fmt.Println("Daftar film penuh")
 	}
 }
 
@@ -144,6 +180,43 @@ func tampilFilm(A DaftarFilm, n int) {
 
 	fmt.Println("===================================================================================================")
 }
+
+// edit film selectioon sort tanpa break
+func editFilm(A *DaftarFilm, n int, judul string) {
+	var i int
+	var ketemu bool
+
+	ketemu = false
+
+	for i = 0; i < n; i++ {
+		if (*A)[i].judul == judul {
+			ketemu = true
+
+			fmt.Print("Masukkan judul baru : ")
+			fmt.Scan(&(*A)[i].judul)
+
+			fmt.Print("Masukkan genre baru : ")
+			fmt.Scan(&(*A)[i].genre)
+
+			fmt.Print("Masukkan tahun rilis baru : ")
+			fmt.Scan(&(*A)[i].tahunRilis)
+
+			fmt.Print("Masukkan deskripsi baru : ")
+			fmt.Scan(&(*A)[i].deskripsi)
+
+			fmt.Print("Masukkan rating baru : ")
+			fmt.Scan(&(*A)[i].rating)
+
+			fmt.Println("Film berhasil diedit")
+		}
+	}
+
+	if !ketemu {
+		fmt.Println("Film tidak ditemukan")
+	}
+}
+
+// menghapus film dari daftar film
 func hapusFilm(A *DaftarFilm, n *int, judul string) {
 	var i int
 	var ketemu bool = false
@@ -162,7 +235,11 @@ func hapusFilm(A *DaftarFilm, n *int, judul string) {
 		fmt.Println("Film tidak ditemukan")
 	}
 }
+//----------------------------------------------------------------------------CRUD--------------------------------------------
 
+
+//----------------------------------------------------CARI--------------------------------------------
+//cari film berdasarkan judul menggunakan sequential search
 func cariFilmJudul(A DaftarFilm, n int, judul string) {
 	var i int
 	var ketemu bool
@@ -190,6 +267,31 @@ func cariFilmJudul(A DaftarFilm, n int, judul string) {
 	}
 }
 
+//cari film berdasarkan genre menggunakan binary search
+
+//----------------------------------------------------CARI--------------------------------------------
+
+//----------------------------------------------------URUTAN--------------------------------------------
+//mengurutkan film berdasarkan rating tertinggi menggunakan selection sort
+func urutFilmRating(A *DaftarFilm, n int) {
+	var i, j, idxMin int
+	var temp Film
+
+	for i = 0; i < n-1; i++ {
+		idxMin = i
+
+		for j = i + 1; j < n; j++ {
+			if (*A)[j].rating > (*A)[idxMin].rating {
+				idxMin = j
+			}
+		}
+
+		temp = (*A)[i]
+		(*A)[i] = (*A)[idxMin]
+		(*A)[idxMin] = temp
+	}
+}
+//mengurutkan film berdasarkan tahun rilis terbaru menggunakan insertion sort
 func urutFilmTahunRilisInsertionSortDescending(A *DaftarFilm, n int) {
 	var i, j int
 	var temp Film
@@ -203,7 +305,9 @@ func urutFilmTahunRilisInsertionSortDescending(A *DaftarFilm, n int) {
 		A[j+1] = temp
 	}
 }
+//----------------------------------------------------URUTAN--------------------------------------------
 
+//------------------------------------STATISTIK--------------------------------------------
 //rata-rata rating film
 func rataRataRating(A DaftarFilm, n int) float64 {
 	var total float64
@@ -216,4 +320,17 @@ func rataRataRating(A DaftarFilm, n int) float64 {
 
 	return total / float64(n)
 }
-cajdscacjacasdc
+// statistik film berdasarkan genre
+func statistikFilmGenre(A DaftarFilm, n int) {
+	var genre string
+	var count int = 0
+	fmt.Print("Masukkan genre film yang akan dicari : ")
+	fmt.Scan(&genre)
+	for i := 0; i < n; i++ {
+		if A[i].genre == genre {
+			count++
+		}
+	}
+	fmt.Printf("Jumlah film dengan genre %s: %d\n", genre, count)
+}
+//------------------------------------STATISTIK--------------------------------------------
