@@ -17,8 +17,11 @@ type DaftarFilm [NMAX]Film
 func main() {
 	var A DaftarFilm
 	var n int = 10
-	var pilih int
+	var pilih, tahun int
 	var judul, genre string
+	var rata float64
+	
+
 
 	A[0] = Film{"Interstellar", "SciFi", 2014, "LuarAngkasa", 9.0}
 	A[1] = Film{"Joker", "Drama", 2019, "ArthurFleck", 8.5}
@@ -38,7 +41,7 @@ func main() {
 		fmt.Println("|1. Tambah Film                                  |")
 		fmt.Println("|2. Lihat Daftar Film                            |")
 		fmt.Println("|3. Edit Film                                    |")
-		fmt.Println("|4. Hapus Film                                   |")
+		fmt.Println("|4. Hapus Film                                   |")	
 		fmt.Println("|5. Cari Film                                    |")
 		fmt.Println("|6. Urutkan Film                                 |")
 		fmt.Println("|7. Statistik Film                               |")
@@ -68,6 +71,7 @@ func main() {
 		case 5:
 			fmt.Print("1. Cari Film Berdasarkan Judul\n")
 			fmt.Print("2. Cari Film Berdasarkan Genre\n")
+			fmt.Print("3. Cari Film Berdasarkan Tahun Rilis\n")
 			fmt.Print("Pilih opsi : ")
 			fmt.Scan(&pilih)
 			switch pilih {
@@ -79,11 +83,17 @@ func main() {
 			case 2:
 				fmt.Print("Masukkan genre film yang akan dicari : ")
 				fmt.Scan(&genre)
-				
+				cariFilmGenre(A, n, genre)
+
+			case 3:
+				fmt.Print("Masukkan tahun rilis film yang akan dicari : ")
+				fmt.Scan(&tahun)
+				urutFilmTahunRilisInsertionSortDescending(&A, n)
+				cariFilmTahunBinary(A, n, tahun)
+
 			default:
 				fmt.Println("Pilihan tidak valid")
 			}
-
 		case 6:
 			fmt.Print("1. Urutkan Film Berdasarkan Rating\n")
 			fmt.Print("2. Urutkan Film Berdasarkan Tahun Rilis\n")
@@ -103,16 +113,20 @@ func main() {
 			}
 		case 7:
 			fmt.Print("1. Statistik Berdasarkan Genre\n")
-			fmt.Print("2. Statistik Berdasarkan Rating\n")
+			fmt.Print("2. Statistik Berdasarkan Rata-Rata Rating\n")
+			fmt.Print("3. Statistik Rating Minimum dan Maksimum\n")
 			fmt.Print("Pilih opsi : ")
 			fmt.Scan(&pilih)
 			switch pilih {
 			case 1:
 				statistikFilmGenre(A, n)
 			case 2:
-				rata := rataRataRating(A, n)
+				rata = rataRating(A, n)
 				fmt.Printf("Rata-rata rating film: %.2f\n", rata)
 				fmt.Println("Rata-rata rating film berhasil dihitung")
+			case 3:
+				minMaxRating(A, n)
+				fmt.Println("Statistik rating film berhasil dihitung")
 			default:
 				fmt.Println("Pilihan tidak valid")
 			}
@@ -267,7 +281,87 @@ func cariFilmJudul(A DaftarFilm, n int, judul string) {
 	}
 }
 
-//cari film berdasarkan genre menggunakan binary search
+
+//cari film berdasarkan genre
+func cariFilmGenre(A DaftarFilm, n int, genre string) {
+	var i int
+	var ketemu bool = false
+	var jumlah int = 0
+
+	for i = 0; i < n; i++ {
+		if A[i].genre == genre {
+			ketemu = true
+			jumlah++
+
+			fmt.Println("----------------------------------------------")
+			fmt.Println("Film ditemukan")
+			fmt.Println("Judul      :", A[i].judul)
+			fmt.Println("Genre      :", A[i].genre)
+			fmt.Println("Tahun Rilis:", A[i].tahunRilis)
+			fmt.Println("Deskripsi  :", A[i].deskripsi)
+			fmt.Printf("Rating     : %.2f\n", A[i].rating)
+			fmt.Println("----------------------------------------------")
+		}
+	}
+
+	if ketemu {
+		fmt.Printf("Jumlah film dengan genre %s: %d\n", genre, jumlah)
+	} else {
+		fmt.Println("Film tidak ditemukan")
+	}
+}
+
+ func cariFilmTahunBinary(A DaftarFilm, n int, tahun int) {
+	var left, right, mid int
+	var i, jumlah int
+	var ketemu bool
+
+	left = 0
+	right = n - 1
+	ketemu = false
+
+	for left <= right && !ketemu {
+		mid = (left + right) / 2
+
+		if A[mid].tahunRilis == tahun {
+			ketemu = true
+		} else if A[mid].tahunRilis < tahun {
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+	}
+
+	if !ketemu {
+		fmt.Println("Film tidak ditemukan!")
+		return
+	}
+
+	i = mid
+	for i >= 0 && A[i].tahunRilis == tahun {
+		i--
+	}
+	i++
+
+	jumlah = 0
+
+	for i < n && A[i].tahunRilis == tahun {
+
+		fmt.Println("----------------------------------------------")
+		fmt.Println("Film ditemukan")
+		fmt.Println("Judul      :", A[i].judul)
+		fmt.Println("Genre      :", A[i].genre)
+		fmt.Println("Tahun Rilis:", A[i].tahunRilis)
+		fmt.Println("Deskripsi  :", A[i].deskripsi)
+		fmt.Printf("Rating     : %.2f\n", A[i].rating)
+		fmt.Println("----------------------------------------------")
+
+		jumlah++
+		i++
+	}
+
+	fmt.Printf("Jumlah film tahun %d : %d\n", tahun, jumlah)
+}
 
 //----------------------------------------------------CARI--------------------------------------------
 
@@ -295,13 +389,22 @@ func urutFilmRating(A *DaftarFilm, n int) {
 func urutFilmTahunRilisInsertionSortDescending(A *DaftarFilm, n int) {
 	var i, j int
 	var temp Film
+
 	for i = 1; i < n; i++ {
 		temp = A[i]
 		j = i - 1
-		for j >= 0 && A[j].tahunRilis < temp.tahunRilis {
+
+		for j >= 0 && (
+			A[j].tahunRilis < temp.tahunRilis ||
+			(A[j].tahunRilis == temp.tahunRilis && A[j].rating < temp.rating) ||
+			(A[j].tahunRilis == temp.tahunRilis &&
+				A[j].rating == temp.rating &&
+				A[j].judul > temp.judul)) {
+
 			A[j+1] = A[j]
-			j = j - 1
+			j--
 		}
+
 		A[j+1] = temp
 	}
 }
@@ -309,17 +412,21 @@ func urutFilmTahunRilisInsertionSortDescending(A *DaftarFilm, n int) {
 
 //------------------------------------STATISTIK--------------------------------------------
 //rata-rata rating film
-func rataRataRating(A DaftarFilm, n int) float64 {
-	var total float64
-	var i int
-
-	total = 0
-	for i = 0; i < n; i++ {
-		total += A[i].rating
+func totalRating(A DaftarFilm, n, idx int) float64 {
+	if idx == n {
+		return 0
 	}
-
-	return total / float64(n)
+	return A[idx].rating + totalRating(A, n, idx+1)
 }
+
+func rataRating(A DaftarFilm, n int) float64 {
+	if n == 0 {
+		return 0
+	}
+	return totalRating(A, n, 0) / float64(n)
+}
+
+
 // statistik film berdasarkan genre
 func statistikFilmGenre(A DaftarFilm, n int) {
 	var genre string
@@ -332,5 +439,34 @@ func statistikFilmGenre(A DaftarFilm, n int) {
 		}
 	}
 	fmt.Printf("Jumlah film dengan genre %s: %d\n", genre, count)
+}
+
+func minMaxRating(A DaftarFilm, n int) {
+	var i int
+	var min, max Film
+
+	min = A[0]
+	max = A[0]
+
+	for i = 1; i < n; i++ {
+
+		if A[i].rating > max.rating {
+			max = A[i]
+		}
+
+		if A[i].rating < min.rating {
+			min = A[i]
+		}
+	}
+
+	fmt.Println("========== Rating Tertinggi ==========")
+	fmt.Println("Judul :", max.judul)
+	fmt.Printf("Rating: %.2f\n", max.rating)
+
+	fmt.Println()
+
+	fmt.Println("========== Rating Terendah ==========")
+	fmt.Println("Judul :", min.judul)
+	fmt.Printf("Rating: %.2f\n", min.rating)
 }
 //------------------------------------STATISTIK--------------------------------------------
