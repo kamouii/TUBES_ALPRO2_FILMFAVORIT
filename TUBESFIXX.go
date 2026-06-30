@@ -20,8 +20,6 @@ func main() {
 	var pilih, tahun int
 	var judul, genre string
 	var rata float64
-	
-
 
 	A[0] = Film{"Interstellar", "SciFi", 2014, "LuarAngkasa", 9.0}
 	A[1] = Film{"Joker", "Drama", 2019, "ArthurFleck", 8.5}
@@ -41,7 +39,7 @@ func main() {
 		fmt.Println("|1. Tambah Film                                  |")
 		fmt.Println("|2. Lihat Daftar Film                            |")
 		fmt.Println("|3. Edit Film                                    |")
-		fmt.Println("|4. Hapus Film                                   |")	
+		fmt.Println("|4. Hapus Film                                   |")
 		fmt.Println("|5. Cari Film                                    |")
 		fmt.Println("|6. Urutkan Film                                 |")
 		fmt.Println("|7. Statistik Film                               |")
@@ -54,7 +52,7 @@ func main() {
 		switch pilih {
 		case 1:
 			tambahFilm(&A, &n)
-		case 2: 
+		case 2:
 			tampilFilm(A, n)
 
 		case 3:
@@ -136,6 +134,7 @@ func main() {
 		}
 	}
 }
+
 //----------------------------------------------------CRUD--------------------------------------------
 //menambahkan film baru ke daftar film
 func tambahFilm(A *DaftarFilm, n *int) {
@@ -249,8 +248,8 @@ func hapusFilm(A *DaftarFilm, n *int, judul string) {
 		fmt.Println("Film tidak ditemukan")
 	}
 }
-//----------------------------------------------------------------------------CRUD--------------------------------------------
 
+//----------------------------------------------------------------------------CRUD--------------------------------------------
 
 //----------------------------------------------------CARI--------------------------------------------
 //cari film berdasarkan judul menggunakan sequential search
@@ -281,7 +280,6 @@ func cariFilmJudul(A DaftarFilm, n int, judul string) {
 	}
 }
 
-
 //cari film berdasarkan genre
 func cariFilmGenre(A DaftarFilm, n int, genre string) {
 	var i int
@@ -311,7 +309,8 @@ func cariFilmGenre(A DaftarFilm, n int, genre string) {
 	}
 }
 
- func cariFilmTahunBinary(A DaftarFilm, n int, tahun int) {
+//cari film berdasarkan tahun rilis menggunakan binary search
+func cariFilmTahunBinary(A DaftarFilm, n int, tahun int) {
 	var left, right, mid int
 	var i, jumlah int
 	var ketemu bool
@@ -326,41 +325,40 @@ func cariFilmGenre(A DaftarFilm, n int, genre string) {
 		if A[mid].tahunRilis == tahun {
 			ketemu = true
 		} else if A[mid].tahunRilis < tahun {
-			right = mid - 1
-		} else {
 			left = mid + 1
+		} else {
+			right = mid - 1
 		}
 	}
 
 	if !ketemu {
 		fmt.Println("Film tidak ditemukan!")
-		return
-	}
+	} else {
+		i = mid
 
-	i = mid
-	for i >= 0 && A[i].tahunRilis == tahun {
-		i--
-	}
-	i++
-
-	jumlah = 0
-
-	for i < n && A[i].tahunRilis == tahun {
-
-		fmt.Println("----------------------------------------------")
-		fmt.Println("Film ditemukan")
-		fmt.Println("Judul      :", A[i].judul)
-		fmt.Println("Genre      :", A[i].genre)
-		fmt.Println("Tahun Rilis:", A[i].tahunRilis)
-		fmt.Println("Deskripsi  :", A[i].deskripsi)
-		fmt.Printf("Rating     : %.2f\n", A[i].rating)
-		fmt.Println("----------------------------------------------")
-
-		jumlah++
+		for i >= 0 && A[i].tahunRilis == tahun {
+			i--
+		}
 		i++
-	}
 
-	fmt.Printf("Jumlah film tahun %d : %d\n", tahun, jumlah)
+		jumlah = 0
+
+		for i < n && A[i].tahunRilis == tahun {
+			fmt.Println("----------------------------------------------")
+			fmt.Println("Film ditemukan")
+			fmt.Println("Judul      :", A[i].judul)
+			fmt.Println("Genre      :", A[i].genre)
+			fmt.Println("Tahun Rilis:", A[i].tahunRilis)
+			fmt.Println("Deskripsi  :", A[i].deskripsi)
+			fmt.Printf("Rating     : %.2f\n", A[i].rating)
+			fmt.Println("----------------------------------------------")
+
+			jumlah++
+			i++
+		}
+
+		fmt.Printf("Jumlah film tahun %d : %d\n", tahun, jumlah)
+	}
 }
 
 //----------------------------------------------------CARI--------------------------------------------
@@ -385,6 +383,7 @@ func urutFilmRating(A *DaftarFilm, n int) {
 		(*A)[idxMin] = temp
 	}
 }
+
 //mengurutkan film berdasarkan tahun rilis terbaru menggunakan insertion sort
 func urutFilmTahunRilisInsertionSortDescending(A *DaftarFilm, n int) {
 	var i, j int
@@ -394,8 +393,7 @@ func urutFilmTahunRilisInsertionSortDescending(A *DaftarFilm, n int) {
 		temp = A[i]
 		j = i - 1
 
-		for j >= 0 && (
-			A[j].tahunRilis < temp.tahunRilis ||
+		for j >= 0 && (A[j].tahunRilis < temp.tahunRilis ||
 			(A[j].tahunRilis == temp.tahunRilis && A[j].rating < temp.rating) ||
 			(A[j].tahunRilis == temp.tahunRilis &&
 				A[j].rating == temp.rating &&
@@ -408,6 +406,7 @@ func urutFilmTahunRilisInsertionSortDescending(A *DaftarFilm, n int) {
 		A[j+1] = temp
 	}
 }
+
 //----------------------------------------------------URUTAN--------------------------------------------
 
 //------------------------------------STATISTIK--------------------------------------------
@@ -425,7 +424,6 @@ func rataRating(A DaftarFilm, n int) float64 {
 	}
 	return totalRating(A, n, 0) / float64(n)
 }
-
 
 // statistik film berdasarkan genre
 func statistikFilmGenre(A DaftarFilm, n int) {
@@ -469,4 +467,5 @@ func minMaxRating(A DaftarFilm, n int) {
 	fmt.Println("Judul :", min.judul)
 	fmt.Printf("Rating: %.2f\n", min.rating)
 }
+
 //------------------------------------STATISTIK--------------------------------------------
